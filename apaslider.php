@@ -1,5 +1,29 @@
 <?php
 
+/*
+
+Plugin Name: apaslider
+Plugin URI: doggydev.ir
+Version: 1.0
+Description: a plugin for aparat videos
+Author: parazok (parsa yadpa)
+Author URI: doggydev.ir/parazok
+License: MIT
+
+*/
+
+/*
+ * just for debugging easier
+ * */
+function debug_to_console($data)
+{
+    $output = $data;
+    if (is_array($output))
+        $output = implode(',', $output);
+
+    echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
+}
+
 /**
  * Activate the plugin.
  */
@@ -38,35 +62,35 @@ function apaslider_setup_post_type()
     $labels = array(
         'name' => 'ویدیوهای آپارات',
         'singular_name' => 'ویدیو',
-        'menu_name' => 'اسلایدر آپارات',
-        'name_admin_bar' => 'اسلایدر آپارات',
-        'archives' => 'آرشیو اسلاید ها',
-        'attributes' => 'ویژگی های اسلاید',
-        'parent_item_colon' => 'اسلاید والد:',
-        'all_items' => 'همه اسلاید ها',
-        'add_new_item' => 'اسلاید جدید',
-        'add_new' => 'اسلاید جدید',
-        'new_item' => 'اسلاید جدید',
-        'edit_item' => 'ویرایش اسلاید',
-        'update_item' => 'آپدیت کردن اسلاید',
-        'view_item' => 'نمایش اسلاید',
-        'view_items' => 'نمایش همه اسلایدها',
-        'search_items' => 'جست و جوی اسلاید',
-        'not_found' => 'اسلایدی پیدا نشد',
+        'menu_name' => 'ویدیوهای آپارات',
+        'name_admin_bar' => 'ویدیوی آپارات',
+        'archives' => 'آرشیو ویدیو ها',
+        'attributes' => 'ویژگی های ویدیو',
+        'parent_item_colon' => 'ویدیو والد:',
+        'all_items' => 'همه ویدیو ها',
+        'add_new_item' => 'ویدیو جدید',
+        'add_new' => 'ویدیو جدید',
+        'new_item' => 'ویدیو جدید',
+        'edit_item' => 'ویرایش ویدیو',
+        'update_item' => 'آپدیت کردن ویدیو',
+        'view_item' => 'نمایش ویدیو',
+        'view_items' => 'نمایش همه ویدیوها',
+        'search_items' => 'جست و جوی ویدیو',
+        'not_found' => 'ویدیوی پیدا نشد',
         'not_found_in_trash' => 'در سطل زباله یافت نشد',
         'featured_image' => 'تصویر شاخص',
         'set_featured_image' => 'ثبت تصویر شاخص',
         'remove_featured_image' => 'حذف تصویر شاخص',
         'use_featured_image' => 'استفاده به عنوان تصویر شاخص',
-        'insert_into_item' => 'بارگزاری در این اسلاید',
+        'insert_into_item' => 'بارگزاری در این ویدیو',
         'uploaded_to_this_item' => 'در این آیتم بارگزاری شد',
-        'items_list' => 'لیست اسلاید ها',
-        'items_list_navigation' => 'پیمایش لیست اسلاید ها',
-        'filter_items_list' => 'فیلتر کردن لیست اسلاید ها',
+        'items_list' => 'لیست ویدیو ها',
+        'items_list_navigation' => 'پیمایش لیست ویدیو ها',
+        'filter_items_list' => 'فیلتر کردن لیست ویدیو ها',
     );
     $args = array(
         'label' => 'ویدیو',
-        'description' => 'ویدیوهایی که باید در اسلایدر آپارات نشان داده شوند',
+        'description' => 'ویدیوهایی که باید در ویدیور آپارات نشان داده شوند',
         'labels' => $labels,
         'supports' => array('title',),
         'hierarchical' => false,
@@ -78,10 +102,11 @@ function apaslider_setup_post_type()
         'show_in_admin_bar' => false,
         'show_in_nav_menus' => false,
         'can_export' => true,
-        'has_archive' => false,
+        'has_archive' => true,
         'exclude_from_search' => true,
-        'publicly_queryable' => false,
+        'publicly_queryable' => true,
         'capability_type' => 'post',
+        'rewrite' => array('slug' => 'videos'), // my custom slug
     );
     register_post_type('apaslider', $args);
 
@@ -109,16 +134,42 @@ add_action('add_meta_boxes', 'apaslider_meta_box');
 
 function apaslider_meta_box_html($post)
 {
-    $value = get_post_meta($post->ID, '_apaslider_video_url', true);
+    $custom = get_post_custom($post->ID);
+//    $value = get_post_meta($post->ID, '_apaslider_video_url', true);
+    $value = $custom['_apaslider_video_url'][0];
+    $is_students_review = $custom['_apaslider_is_std_rev'][0];
+    $img = $custom['_apaslider_img'][0];
+//    debug_to_console($value);
+//    debug_to_console($is_students_review);
     ?>
     <label for='apaslider_video_url_input' style='font-size: large;'>آدرس ویدیو آپارات را وارد کنید:</label>
     <input name='apaslider_video_url_input' id='apaslider_video_url_input'
-           style='width: 100%; margin-top: 1em; padding: 0.5em;' placeholder='https://www.aparat.com/v/r5RS8'
+           style='width: 100%; margin-top: 1em; padding: 0.5em;'
+           placeholder='https://www.aparat.com/v/r5RS8'
            value='<?php echo $value ?>'/>
+    <a style='width: 100%; margin-bottom: 1em; padding: 0.5em;' href="<?php echo $value ?>"><?php echo $value ?></a>
+    <br>
+    <br>
+
+    <label for='apaslider_is_students_review' style='margin-top: 1em; font-size: small;'>اگر این ویدیو از نظرات
+        دانشجویان است تیک بزنید:</label>
+    <input name='apaslider_is_students_review' id='apaslider_is_students_review'
+           style=' padding: 0.5em;'
+           type="checkbox"
+           <?php if ($is_students_review == true) { ?>checked="checked"<?php } ?>
+    />
+
+
+    <?php if (isset($img)) { ?>
+    <p>عکس کاور ویدیوی آپارات (بصورت اتوماتیک دریافت میشود):</p>
+    <img style="width: 400px; margin: 1em; border: 2px dashed #0a4b78" src="<?php echo $img ?>">
+
+
     <?php
+    }
 }
 
-function apaslider_save_video_url($post_id)
+function apaslider_save($post_id)
 {
     if (array_key_exists('apaslider_video_url_input', $_POST)) {
         update_post_meta(
@@ -127,9 +178,35 @@ function apaslider_save_video_url($post_id)
             $_POST['apaslider_video_url_input']
         );
     }
+
+
+//    if (array_key_exists('apaslider_is_students_review', $_POST)) {
+//        update_post_meta(
+//            $post_id,
+//            '_apaslider_is_std_rev',
+//            $_POST['apaslider_is_students_review']
+//        );
+//    }
+
+    update_post_meta($post_id, "_apaslider_is_std_rev", $_POST["apaslider_is_students_review"]);
+
+
+    if (array_key_exists('apaslider_video_url_input', $_POST)) {
+
+        $url = $_POST['apaslider_video_url_input'];
+        $url = explode("/", $url);
+        $url = "https://www.aparat.com/etc/api/video/videohash/" . end($url);
+        $r = wp_remote_get($url, array());
+        $body = wp_remote_retrieve_body($r);
+        update_post_meta($post_id, "_apaslider_img", json_decode($body, true)["video"]["big_poster"]);
+    }
+
+
+    return $post_id;
+
 }
 
-add_action('save_post', 'apaslider_save_video_url');
+add_action('save_post', 'apaslider_save');
 
 /**
  * short code
@@ -141,9 +218,30 @@ function apaslider_shortcode($atts = array(), $content = null)
 //    $content = do_shortcode( $content );
 // echo plugin_dir_url( __FILE__ ) . 'public/img/play-circle.png';
 //    explode("/",$attrs[""])
+//
 
+//    $args = array(
+//        'post_type'		=> 'post',
+//        'meta_query'	=> array(
+//            'relation'		=> 'AND',
+//            array(
+//                'key'	 	=> 'color',
+//                'value'	  	=> array('red', 'orange'),
+//                'compare' 	=> 'IN',
+//            ),
+//            array(
+//                'key'	  	=> 'featured',
+//                'value'	  	=> '1',
+//                'compare' 	=> '=',
+//            ),
+//        ),
+//    );
 
-    $args = array('post_type' => 'apaslider');
+    $args = array(
+        'post_type' => 'apaslider',
+        'meta_key' => '_apaslider_is_std_rev',
+        'meta_value' => 'on'
+    );
 
     $the_query = new WP_Query($args);
     $urls = array();
@@ -220,8 +318,9 @@ function apaslider_shortcode($atts = array(), $content = null)
             flex-direction: row;
             background-color: #616060;
             color: white;
-            padding: 2em 5em 4em 5em;
+            padding: 4em 1em 8em 1em;
             flex-wrap: wrap;
+            direction: ltr;
         }
 
         .apaslider_slider {
@@ -233,6 +332,7 @@ function apaslider_shortcode($atts = array(), $content = null)
         }
 
         .apaslider_discription {
+            overflow: hidden;
             width: 30%;
         }
 
@@ -249,13 +349,32 @@ function apaslider_shortcode($atts = array(), $content = null)
             line-height: 23px;
             text-align: right;
 
+            font-family: 'IRANSans';
+
             color: #EAEAEA;
         }
-        .apaslider_left , .apaslider_right {
+
+        .apaslider_left, .apaslider_right {
             margin: 0 1em;
         }
-        .apaslider_slider > .h_iframe-aparat_embed_frame{
+
+        .apaslider_slider > .h_iframe-aparat_embed_frame {
             display: none;
+        }
+
+        .apaslider_more_video,
+        .apaslider_more_video > a {
+
+            font-family: 'IRANSans';
+            font-style: normal;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 25px;
+            /* identical to box height */
+
+            text-align: right;
+
+            color: #B6CBF2;
         }
 
     </style>
@@ -267,17 +386,22 @@ function apaslider_shortcode($atts = array(), $content = null)
             <img src='<?php echo plugin_dir_url(__FILE__) . "public/img/l.png" ?>' class="apaslider_left">
 
             <? echo $vids_xml ?>
-            <img src='<?php echo plugin_dir_url(__FILE__) . "public/img/r.png" ?>' class="apaslider_right" >
+            <img src='<?php echo plugin_dir_url(__FILE__) . "public/img/r.png" ?>' class="apaslider_right">
         </div>
 
 
         <div class="apaslider_discription">
             <h2 style="text-align: right">نظرات دانشجویان ما درباره سفیرساعی</h2>
-            <div style="width: 100%;height: 1px; background: #FF1D25;"></div>
+            <div style="width: 100%;height: 2px; background: #FF1D25; margin-left: 2em;"></div>
             <p style="text-align: right">سالها تجربه در ارائه خدمات اعزام دانشجو سبب شده است که سفیرساعی خانواده ای به
                 وسعت ایران عزیز داشته باشد.
                 عزیزانی که از نقاط مختلف کشور به ما اعتماد کردند و در حال حاضر در مراکز معتبر آموزشی دنیا تحصیل می کنند
                 و مایه مباحات ماست نظراتی که درباره ما ثبت نموده اند.</p>
+            <p style="text-align: left;" class="apaslider_more_video">
+                <a
+                        href="<?php echo get_post_type_archive_link("apaslider") ?>"
+                >ویدیوهای بیشتر</a>
+            </p>
         </div>
 
     </div>
@@ -290,8 +414,8 @@ function apaslider_shortcode($atts = array(), $content = null)
             all.hide();
             all.eq(index).show();
 
-            $(".apaslider_left").click(function (){
-                if(index> 0)
+            $(".apaslider_left").click(function () {
+                if (index > 0)
                     index--;
                 else
                     index = length - 1;
@@ -300,8 +424,8 @@ function apaslider_shortcode($atts = array(), $content = null)
                 all.eq(index).show();
             });
 
-            $(".apaslider_right").click(function (){
-                if(index< length-1)
+            $(".apaslider_right").click(function () {
+                if (index < length - 1)
                     index++;
                 else
                     index = 0;
@@ -311,17 +435,67 @@ function apaslider_shortcode($atts = array(), $content = null)
             });
 
 
-
         });
     </script>
 
     <?php
 
     $xml .= ob_get_clean();
+
     return $xml;
 
 }
 
 add_shortcode('apaslider', 'apaslider_shortcode');
+
+
+/**
+ * taxonomy
+ * */
+
+
+/*
+//hook into the init action and call create_topics_nonhierarchical_taxonomy when it fires
+
+add_action( 'init', 'create_topics_nonhierarchical_taxonomy', 0 );
+
+function create_topics_nonhierarchical_taxonomy() {
+
+// Labels part for the GUI
+
+    $labels = array(
+        'name' => _x( 'نوع', 'taxonomy general name' ),
+        'singular_name' => _x( 'نوع', 'taxonomy singular name' ),
+        'search_items' =>  __( 'جست و جو' ),
+        'popular_items' => __( 'محبوب ها' ),
+        'all_items' => __( 'همه‌ی انواع ویدیو ها' ),
+        'parent_item' => null,
+        'parent_item_colon' => null,
+        'edit_item' => __( 'ویرایش نوع' ),
+        'update_item' => __( 'بروز رسانی نوع' ),
+        'add_new_item' => __( 'اضافه کردن یک نوع جدید' ),
+        'new_item_name' => __( 'اضافه کردن نام جدید' ),
+        'separate_items_with_commas' => __( 'مقادیر را با ویرگول جدا کنید' ),
+        'add_or_remove_items' => __( 'افزودن یا حذف نوع ها' ),
+        'choose_from_most_used' => __( 'انتخاب از بیشترین استفاده شده ها' ),
+        'menu_name' => __( 'انواع ویدیوی آپارات' ),
+    );
+
+// Now register the non-hierarchical taxonomy like tag
+
+    register_taxonomy('aparat-types','apaslider',array(
+        'hierarchical' => false,
+        'labels' => $labels,
+        'show_ui' => true,
+        'show_in_rest' => true,
+        'show_admin_column' => true,
+        'update_count_callback' => '_update_post_term_count',
+        'query_var' => true,
+//        'rewrite' => array( 'slug' => 'topic' ),
+    ));
+}
+
+*/
+
 
 ?>
