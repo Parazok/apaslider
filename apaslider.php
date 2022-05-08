@@ -370,6 +370,7 @@ function apaslider_shortcode($atts = array(), $content = null)
         }
 
         .apaslider_left, .apaslider_right {
+            cursor: pointer;
             margin: 0 1em;
         }
 
