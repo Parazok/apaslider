@@ -166,7 +166,7 @@ function apaslider_meta_box_html($post)
 
 
     <?php
-    }
+}
 }
 
 function apaslider_save($post_id)
@@ -309,37 +309,52 @@ function apaslider_shortcode($atts = array(), $content = null)
             height: 100%
         }
 
-
         .apaslider_container {
+            background-color: #616060;
+            width: 100vw;
+            align-items: center;
+            text-align: -webkit-center;
+        }
+
+        .apaslider_content {
             display: flex;
             align-content: center;
             align-items: center;
             justify-content: space-evenly;
-            flex-direction: row;
-            background-color: #616060;
+            flex-direction: row-reverse;
             color: white;
-            padding: 4em 1em 8em 1em;
             flex-wrap: wrap;
-            direction: ltr;
+            /*direction: ltr;*/
+            max-width: 1140px;
+            padding: 3em 0 6em 0;
         }
 
         .apaslider_slider {
-            width: 50%;
+            width: 60%;
             display: flex;
             align-content: stretch;
             justify-content: center;
             align-items: center;
+            margin-left: -30px;
+
+        }
+
+        .apaslider_discription_container{
+            width: 40%;
+
         }
 
         .apaslider_discription {
             overflow: hidden;
-            width: 30%;
+            max-width: 450px;
+
         }
 
         .apaslider_discription > h2 {
             font-weight: 700;
             font-size: 24px;
             line-height: 38px;
+            color: white;
         }
 
         .apaslider_discription > p {
@@ -381,27 +396,35 @@ function apaslider_shortcode($atts = array(), $content = null)
 
     <div class="apaslider_container">
 
-
-        <div class="apaslider_slider">
-            <img src='<?php echo plugin_dir_url(__FILE__) . "public/img/l.png" ?>' class="apaslider_left">
-
-            <? echo $vids_xml ?>
-            <img src='<?php echo plugin_dir_url(__FILE__) . "public/img/r.png" ?>' class="apaslider_right">
-        </div>
+        <div class="apaslider_content">
 
 
-        <div class="apaslider_discription">
-            <h2 style="text-align: right">نظرات دانشجویان ما درباره سفیرساعی</h2>
-            <div style="width: 100%;height: 2px; background: #FF1D25; margin-left: 2em;"></div>
-            <p style="text-align: right">سالها تجربه در ارائه خدمات اعزام دانشجو سبب شده است که سفیرساعی خانواده ای به
-                وسعت ایران عزیز داشته باشد.
-                عزیزانی که از نقاط مختلف کشور به ما اعتماد کردند و در حال حاضر در مراکز معتبر آموزشی دنیا تحصیل می کنند
-                و مایه مباحات ماست نظراتی که درباره ما ثبت نموده اند.</p>
-            <p style="text-align: left;" class="apaslider_more_video">
-                <a
-                        href="<?php echo get_post_type_archive_link("apaslider") ?>"
-                >ویدیوهای بیشتر</a>
-            </p>
+            <div class="apaslider_slider">
+                <img src='<?php echo plugin_dir_url(__FILE__) . "public/img/r.png" ?>' class="apaslider_left">
+
+                <? echo $vids_xml ?>
+                <img src='<?php echo plugin_dir_url(__FILE__) . "public/img/l.png" ?>' class="apaslider_right">
+            </div>
+
+            <div class="apaslider_discription_container">
+
+                <div class="apaslider_discription">
+                    <h2 style="text-align: right">نظرات دانشجویان ما درباره سفیرساعی</h2>
+                    <div style="width: 100%;height: 2px; background: #FF1D25; margin-left: 2em;"></div>
+                    <p style="text-align: right">سالها تجربه در ارائه خدمات اعزام دانشجو سبب شده است که سفیرساعی خانواده
+                        ای به
+                        وسعت ایران عزیز داشته باشد.
+                        عزیزانی که از نقاط مختلف کشور به ما اعتماد کردند و در حال حاضر در مراکز معتبر آموزشی دنیا تحصیل
+                        می کنند
+                        و مایه مباحات ماست نظراتی که درباره ما ثبت نموده اند.</p>
+                    <p style="text-align: left;" class="apaslider_more_video">
+                        <a
+                                href="<?php echo get_post_type_archive_link("apaslider") ?>"
+                        >ویدیوهای بیشتر</a>
+                    </p>
+                </div>
+            </div>
+
         </div>
 
     </div>
