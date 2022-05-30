@@ -4,7 +4,7 @@
 
 Plugin Name: apaslider
 Plugin URI: doggydev.ir
-Version: 2.1
+Version: 2.4
 Description: a plugin for aparat videos
 Author: parazok (parsa yadpa)
 Author URI: doggydev.ir/parazok
